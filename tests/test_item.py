@@ -1,3 +1,5 @@
+import csv
+
 import pytest
 from src.item import Item
 
@@ -36,3 +38,46 @@ def test_negative_quantity_raises_value_error():
 def test_zero_or_negative_price_raises_value_error():
     with pytest.raises(ValueError):
         item = Item("Item 5", -100, 1)
+
+
+def test_instantiate_from_csv():
+    csv_path = "test.csv"
+    csv_data = [
+        {"name": "Item 1", "price": "10.99", "quantity": "5"},
+        {"name": "Item 2", "price": "5.99", "quantity": "10"},
+        {"name": "Item 3", "price": "2.99", "quantity": "3"}
+    ]
+    with open(csv_path, 'w+', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=["name", "price", "quantity"])
+        writer.writeheader()
+        writer.writerows(csv_data)
+
+    # Act
+    Item.instantiate_from_csv(csv_path)
+
+    # Assert
+    assert len(Item.all) == 3
+    assert Item.all[0].name == "Item 1"
+    assert Item.all[0].price == 10
+    assert Item.all[0].quantity == 5
+    assert Item.all[1].name == "Item 2"
+    assert Item.all[1].price == 5
+    assert Item.all[1].quantity == 10
+    assert Item.all[2].name == "Item 3"
+    assert Item.all[2].price == 2
+    assert Item.all[2].quantity == 3
+
+def test_returns_none_when_given_string_with_non_digit_characters():
+    item = Item('1',1,1)
+    string = "12a34"
+    result = item.string_to_number(string)
+    assert result is None
+    string = ""
+    result = item.string_to_number(string)
+    assert result is None
+    string = "123"
+    result = item.string_to_number(string)
+    assert result is 123
+    string = "1.23"
+    result = item.string_to_number(string)
+    assert result is 1
