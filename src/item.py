@@ -9,6 +9,13 @@ class Item:
     pay_rate = 1.0
     all = []
 
+    def __repr__(self):
+        return f"Item('{self.name}', {self.price}, {self.quantity})"
+
+    "Item('Смартфон', 10000, 20)"
+    def __str__(self):
+        return self.name
+
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
         Создание экземпляра класса item.
@@ -23,7 +30,7 @@ class Item:
             raise ValueError("Quantity must be a non-negative integer.")
         if price <= 0:
             raise ValueError("Price must be a positive number.")
-        self._name = name
+        self.name = name
         self.price = price
         self.quantity = quantity
         self.all.append(self)
