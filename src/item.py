@@ -2,6 +2,7 @@ import csv
 import re
 from csv import DictReader
 
+
 class Item:
     """
     Класс для представления товара в магазине.
@@ -13,6 +14,7 @@ class Item:
         return f"Item('{self.name}', {self.price}, {self.quantity})"
 
     "Item('Смартфон', 10000, 20)"
+
     def __str__(self):
         return self.name
 
@@ -44,6 +46,9 @@ class Item:
         if len(new_name) > 10:
             new_name = new_name[0:10]
         self._name = new_name
+
+    def __add__(self, other):
+        return self.quantity + other.quantity
 
     def calculate_total_price(self) -> float:
         """
