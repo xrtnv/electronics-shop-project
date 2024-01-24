@@ -81,3 +81,26 @@ def test_returns_none_when_given_string_with_non_digit_characters():
     string = "1.23"
     result = item.string_to_number(string)
     assert result is 1
+
+def test_repr():
+    item = Item("Item 1", 10.0, 5)
+    assert repr(item) == f"Item('{item.name}', {item.price}, {item.quantity})"
+
+    item = Item("aaaaaaaaaaaaaaa", 10.0, 5)
+    assert repr(item) == "Item('aaaaaaaaaa', 10.0, 5)"
+
+def test_str():
+    item = Item("Phone", 1000, 10)
+    assert str(item) == "Phone"
+
+    item = Item("Smartphone1234567890", 1000, 10)
+    assert str(item) == "Smartphone"
+
+    with pytest.raises(ValueError) as e:
+        item = Item("", 1000, 10)
+    assert str(e.value) == "Name cannot be empty."
+
+    with pytest.raises(ValueError) as e:
+        item = Item("Phone", 1000, -10)
+    assert str(e.value) == "Quantity must be a non-negative integer."
+
