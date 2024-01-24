@@ -2,6 +2,7 @@ import csv
 
 import pytest
 from src.item import Item
+from src.phone import Phone
 
 
 def test_valid_parameters_no_errors():
@@ -104,3 +105,20 @@ def test_str():
         item = Item("Phone", 1000, -10)
     assert str(e.value) == "Quantity must be a non-negative integer."
 
+def test_add_item_and_phone():
+    item = Item("Смартфон", 10000, 20)
+    phone = Phone("iPhone 14", 120_000, 5, 2)
+    assert item + phone == 25
+
+def test_add_two_items():
+    item1 = Item("Смартфон", 10000, 20)
+    item2 = Item("Ноутбук", 50000, 2)
+    assert item1 + item2 == 22
+
+def test_invalid_addition():
+    item = Item("Смартфон", 10000, 20)
+    not_a_phone = "Not a Phone"
+    try:
+        result = item + not_a_phone
+    except TypeError as e:
+        assert str(e) == "Unsupported operand type: <class 'str'>"
