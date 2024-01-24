@@ -11,11 +11,11 @@ class Item:
     all = []
 
     def __repr__(self):
-        return f"Item('{self.name}', {self.price}, {self.quantity})"
+        return f"Item('{self._name}', {self.price}, {self.quantity})"
 
 
     def __str__(self):
-        return self.name
+        return self._name
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
@@ -25,13 +25,7 @@ class Item:
         :param price: Цена за единицу товара.
         :param quantity: Количество товара в магазине.
         """
-        if not name:
-            raise ValueError("Name cannot be empty.")
-        if not isinstance(quantity, int) or quantity < 0:
-            raise ValueError("Quantity must be a non-negative integer.")
-        if price <= 0:
-            raise ValueError("Price must be a positive number.")
-        self.name = name
+        self._name = name
         self.price = price
         self.quantity = quantity
         self.all.append(self)
@@ -74,24 +68,18 @@ class Item:
         self.price = round(self.price * self.pay_rate, 2)
 
     @classmethod
-    def instantiate_from_csv(csv, path: str):
+    def instantiate_from_csv(cls, path: str):
         """
         Инициализирует экземпляры класса из CSV-файла
         """
-        try:
-            csv.all.clear()
-            with open(path, 'r') as file:
-                csv_reader = DictReader(file)
-                for row in csv_reader:
-                    print(row)
-                    name = row['name']
-                    price = csv.string_to_number(row['price'])
-                    quantity = csv.string_to_number(row['quantity'])
-                    item = Item(name, price, quantity)
-        except FileNotFoundError:
-            print("File not found.")
-        except Exception as e:
-            print("An error occurred:", str(e))
+        with open(path, 'r') as file:
+            csv_reader = csv.DictReader(file)
+            Item.all = []
+            for row in csv_reader:
+                _name = row['name']
+                price = cls.string_to_number(row['price'])
+                quantity = cls.string_to_number(row['quantity'])
+                cls(_name, price, quantity)
 
     @staticmethod
     def string_to_number(string):
