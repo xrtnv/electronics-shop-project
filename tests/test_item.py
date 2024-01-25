@@ -1,6 +1,8 @@
 import csv
 
 import pytest
+
+from src.error import InstantiateCSVError
 from src.item import Item
 from src.phone import Phone
 
@@ -68,8 +70,9 @@ def test_instantiate_from_csv():
     assert Item.all[2].price == 2
     assert Item.all[2].quantity == 3
 
+
 def test_returns_none_when_given_string_with_non_digit_characters():
-    item = Item('1',1,1)
+    item = Item('1', 1, 1)
     string = "12a34"
     result = item.string_to_number(string)
     assert result is None
@@ -83,12 +86,14 @@ def test_returns_none_when_given_string_with_non_digit_characters():
     result = item.string_to_number(string)
     assert result is 1
 
+
 def test_repr():
     item = Item("Item 1", 10.0, 5)
     assert repr(item) == f"Item('{item.name}', {item.price}, {item.quantity})"
 
     item = Item("aaaaaaaaaaaaaaa", 10.0, 5)
     assert repr(item) == "Item('aaaaaaaaaa', 10.0, 5)"
+
 
 def test_str():
     item = Item("Phone", 1000, 10)
@@ -105,15 +110,18 @@ def test_str():
         item = Item("Phone", 1000, -10)
     assert str(e.value) == "Quantity must be a non-negative integer."
 
+
 def test_add_item_and_phone():
     item = Item("Смартфон", 10000, 20)
     phone = Phone("iPhone 14", 120_000, 5, 2)
     assert item + phone == 25
 
+
 def test_add_two_items():
     item1 = Item("Смартфон", 10000, 20)
     item2 = Item("Ноутбук", 50000, 2)
     assert item1 + item2 == 22
+
 
 def test_invalid_addition():
     item = Item("Смартфон", 10000, 20)
@@ -121,4 +129,18 @@ def test_invalid_addition():
     try:
         result = item + not_a_phone
     except TypeError as e:
-        assert str(e) == "Unsupported operand type: <class 'str'>"
+        assert str(e) == "Unsupported operand type(s) for +: 'Item' and 'str'"
+
+
+def test_corrupted_file():
+    try:
+        Item.instantiate_from_csv('../test_path.csv')
+    except InstantiateCSVError as e:
+        assert str(e) == "Файл test_path.csv поврежден"
+
+
+def test_non_existent_file():
+    try:
+        Item.instantiate_from_csv('test_path')
+    except FileNotFoundError as e:
+        assert str(e) == "Отсутствует файл test_path"
