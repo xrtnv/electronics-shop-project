@@ -134,9 +134,9 @@ def test_invalid_addition():
 
 def test_corrupted_file():
     try:
-        Item.instantiate_from_csv('../test_path.csv')
+        Item.instantiate_from_csv('tests/test_path.csv')
     except InstantiateCSVError as e:
-        assert str(e) == "Файл test_path.csv поврежден"
+        assert str(e) == "Файл tests/test_path.csv поврежден"
 
 
 def test_non_existent_file():

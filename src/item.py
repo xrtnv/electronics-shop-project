@@ -1,3 +1,4 @@
+import os
 from csv import DictReader
 
 from src.error import InstantiateCSVError
@@ -76,25 +77,25 @@ class Item:
         self.price = round(self.price * self.pay_rate, 2)
 
     @classmethod
-    def instantiate_from_csv(cls, path: str = "../src/items.csv"):
+    def instantiate_from_csv(cls, path: str = "../tests/test_path.csv"):
         """
         Инициализирует экземпляры класса из CSV-файла
         """
-        try:
-            with open(path, 'r') as file:
-                csv_reader = DictReader(file)
-                Item.all = []
-                for row in csv_reader:
-                    if None in row or '' in row:
-                        raise InstantiateCSVError(f"Файл {path} поврежден")
-                    if None in row.values() or ' ' in row.values():
-                        raise InstantiateCSVError(f"Файл {path} поврежден")
-                    __name = row['name']
-                    price = cls.string_to_number(row['price'])
-                    quantity = cls.string_to_number(row['quantity'])
-                    cls(__name, price, quantity)
-        except FileNotFoundError:
+        if not os.path.exists(path):
             raise FileNotFoundError(f"Отсутствует файл {path}")
+        with open(path, 'r') as file:
+            csv_reader = DictReader(file)
+            Item.all = []
+            for row in csv_reader:
+                if None in row or '' in row:
+                    raise InstantiateCSVError(f"Файл {path} поврежден")
+                if None in row.values() or ' ' in row.values():
+                    raise InstantiateCSVError(f"Файл {path} поврежден")
+                __name = row['name']
+                price = cls.string_to_number(row['price'])
+                quantity = cls.string_to_number(row['quantity'])
+                cls(__name, price, quantity)
+
 
     @staticmethod
     def string_to_number(string):
